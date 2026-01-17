@@ -1,42 +1,35 @@
-# Compilers
+# Compiler
 WCC := i686-w64-mingw32-g++
-LCC := clang++
 
-# Common flags
+# Flags
 FLAGS := -Wall -static
 
-# Source files
-SOURCES := $(wildcard *.cpp)
-
-# Build directory
+# Build dir
 BUILD_DIR := build
 
-# Output names
-OUT := program
-OUT_WINDOWS := $(BUILD_DIR)/$(OUT)
+all:
+	@echo "Available tasks:"
+	@echo "  task1 - Compile task1"
+	@echo "  task2 - Compile task2"
+	@echo "  clean - Clean build dir"
 
-# Default target
-all: windows run
-
-# Ensure build directory exists
+# Ensure build dir exists
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
-# Make philosopher process
-philosopher.exe: ./ex10-runner.cpp
-	@echo "✅ Building philosopher process..."
-	@$(WCC) $(FLAGS) ./ex10-runner.cpp -o philosopher.exe
+# Task 1
+task1: $(BUILD_DIR)
+	@echo "Building task1..."
+	$(WCC) $(FLAGS) ./ex10-cs.cpp -o $(BUILD_DIR)/task1.exe
 
-# Build Windows version
-windows: $(BUILD_DIR) philosopher.exe
-	$(WCC) $(FLAGS) ./ex10-philosopher.cpp -o $(OUT_WINDOWS)
-	@echo "✅ Compiled for Windows -> $(OUT_WINDOWS)"
+# Task 2
+task2: $(BUILD_DIR)
+	@echo "Building task2..."
+	$(WCC) $(FLAGS) ./ex10-runner.cpp -o $(BUILD_DIR)/philosopher.exe
+	$(WCC) $(FLAGS) ./ex10-philosopher.cpp -o $(BUILD_DIR)/task2.exe
 
-run: windows
-	./$(OUT_WINDOWS).exe
-
-# Clean up
 clean:
 	rm -rf $(BUILD_DIR)
 
-.PHONY: windows run all
+.PHONY: task1 task2 clean all
+
