@@ -17,7 +17,7 @@ int main()
 
   for (int i = 0; i < NUM_PHILOSOPHERS; ++i)
   {
-    string name = "ChopstickMutex_" + to_string(i);
+    string name = "Global\\Fork" + to_string(i);
     mutexes[i] = CreateMutexA(NULL, FALSE, name.c_str());
     if (mutexes[i] == NULL)
     {

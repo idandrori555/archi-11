@@ -41,6 +41,8 @@ DWORD WINAPI tryEat(LPVOID lpParameter)
     EnterCriticalSection(&sticks[first]);
     EnterCriticalSection(&sticks[second]);
 
+    printf("Philosopher %d is eating\n", id);
+
     LeaveCriticalSection(&sticks[second]);
     LeaveCriticalSection(&sticks[first]);
   }

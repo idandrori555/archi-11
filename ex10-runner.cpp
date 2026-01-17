@@ -1,4 +1,5 @@
 #include "picker.h"
+#include <ctime>
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
@@ -28,6 +29,8 @@ int main(int argc, char *argv[])
   if (!hLeft || !hRight)
     return 1;
 
+  clock_t start = clock();
+
   for (int i = 0; i < MEALS_COUNT; ++i)
   {
     // מניעת Deadlock: הפילוסוף האחרון מרים בסדר הפוך
@@ -47,6 +50,10 @@ int main(int argc, char *argv[])
     ReleaseMutex(hLeft);
     ReleaseMutex(hRight);
   }
+
+  clock_t end = clock();
+  double time_taken = (double)(end - start) / CLOCKS_PER_SEC;
+  printf("Philosopher %d finished eating %d meals in %f seconds\n", id, MEALS_COUNT, time_taken);
 
   CloseHandle(hLeft);
   CloseHandle(hRight);
