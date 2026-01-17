@@ -22,9 +22,14 @@ all: windows run
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
+# Make philosopher process
+philosopher.exe: ./ex10-runner.cpp
+	@echo "✅ Building philosopher process..."
+	@$(WCC) $(FLAGS) ./ex10-runner.cpp -o philosopher.exe
+
 # Build Windows version
-windows: $(BUILD_DIR)
-	$(WCC) $(FLAGS) $(SOURCES) -o $(OUT_WINDOWS)
+windows: $(BUILD_DIR) philosopher.exe
+	$(WCC) $(FLAGS) ./ex10-philosopher.cpp -o $(OUT_WINDOWS)
 	@echo "✅ Compiled for Windows -> $(OUT_WINDOWS)"
 
 run: windows

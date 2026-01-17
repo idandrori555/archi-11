@@ -1,3 +1,4 @@
+#include "picker.h"
 #include <ctime>
 #include <stdio.h>
 #include <windows.h>
@@ -47,6 +48,7 @@ DWORD WINAPI tryEat(LPVOID lpParameter)
   return 0;
 }
 
+#if CURRENT_TASK == 1
 int main(void)
 {
   HANDLE threads[PHILOSOPHERS_COUNT];
@@ -85,3 +87,4 @@ int main(void)
 
   return 0;
 }
+#endif

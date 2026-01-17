@@ -3,7 +3,12 @@ CompileFlags:
     "--target=x86_64-w64-windows-gnu",
     "-std=c++23",
     "-Wall",
+    # נתיבי המערכת הכלליים של MinGW
     "-isystem", "/usr/x86_64-w64-mingw32/include",
+    # נתיבי ה-C++ Standard Library (ודא שהגרסה 10-win32 תואמת למה שמותקן אצלך)
     "-isystem", "/usr/lib/gcc/x86_64-w64-mingw32/10-win32/include/c++",
-    "-isystem", "/usr/lib/gcc/x86_64-w64-mingw32/10-win32/include/c++/x86_64-w64-mingw32"
+    "-isystem", "/usr/lib/gcc/x86_64-w64-mingw32/10-win32/include/c++/x86_64-w64-mingw32",
+    "-isystem", "/usr/lib/gcc/x86_64-w64-mingw32/10-win32/include/c++/backward",
+    # הוספת נתיב ה-Header של Windows (עבור windows.h)
+    "-isystem", "/usr/x86_64-w64-mingw32/sys-root/mingw/include"
   ]
