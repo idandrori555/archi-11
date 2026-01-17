@@ -50,12 +50,13 @@ DWORD WINAPI tryEat(LPVOID lpParameter)
   return 0;
 }
 
-#if CURRENT_TASK == 1
+#if CURRENT_TASK == 2
 int main(void)
 {
   HANDLE threads[PHILOSOPHERS_COUNT];
   PhilosopherData pData[PHILOSOPHERS_COUNT];
 
+  // Initiaalize sticks (critical sections)
   for (int i = 0; i < PHILOSOPHERS_COUNT; ++i)
   {
     InitializeCriticalSection(&sticks[i]);
@@ -64,6 +65,7 @@ int main(void)
   puts("Starting to measure time...");
   clock_t start = clock();
 
+  // Initialize philosophers (threads)
   for (int i = 0; i < PHILOSOPHERS_COUNT; ++i)
   {
     pData[i].id = i;
@@ -75,12 +77,14 @@ int main(void)
     }
   }
 
+  // Wait for everything to finish
   WaitForMultipleObjects(PHILOSOPHERS_COUNT, threads, TRUE, INFINITE);
 
   clock_t end = clock();
   double totalTime = (double)(end - start) / CLOCKS_PER_SEC;
   printf("Time taken: %f seconds\n", totalTime);
 
+  // Cleanup
   for (int i = 0; i < PHILOSOPHERS_COUNT; ++i)
   {
     CloseHandle(threads[i]);
