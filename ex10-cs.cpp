@@ -37,7 +37,7 @@ DWORD WINAPI tryEat(LPVOID lpParameter)
   // start timing
   clock_t start = clock();
 
-  for (int i = 0; i < MEALS_PER_PHILOSOPHER; ++i)
+  for (int i = 0; i < MEALS_COUNT; ++i)
   {
     EnterCriticalSection(&sticks[first]);
     EnterCriticalSection(&sticks[second]);
