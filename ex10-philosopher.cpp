@@ -1,13 +1,10 @@
-#include "picker.h"
+#include "const.h"
 #include <ctime>
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
 
 #if CURRENT_TASK == 2
-constexpr int NUM_PHILOSOPHERS = 5;
-constexpr int MEALS_COUNT = 1'000'000;
-
 int main(int argc, char *argv[])
 {
   if (argc < 2)
@@ -17,15 +14,17 @@ int main(int argc, char *argv[])
   int left_fork = id;
   int right_fork = (id + 1) % NUM_PHILOSOPHERS;
 
-  char left_name[32], right_name[32];
-  sprintf(left_name, "Global\\Fork%d", left_fork);
-  sprintf(right_name, "Global\\Fork%d", right_fork);
+  std::string left_name = "Global\\Fork" + std::to_string(left_fork);
+  std::string right_name = "Global\\Fork" + std::to_string(right_fork);
 
-  HANDLE hLeft = OpenMutexA(MUTEX_ALL_ACCESS, FALSE, left_name);
-  HANDLE hRight = OpenMutexA(MUTEX_ALL_ACCESS, FALSE, right_name);
+  HANDLE hLeft = OpenMutexA(MUTEX_ALL_ACCESS, FALSE, left_name.c_str());
+  HANDLE hRight = OpenMutexA(MUTEX_ALL_ACCESS, FALSE, right_name.c_str());
 
   if (!hLeft || !hRight)
+  {
+    printf("Failed to open mutexes for philosopher %d\n", id);
     return 1;
+  }
 
   clock_t start = clock();
 

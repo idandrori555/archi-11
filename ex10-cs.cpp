@@ -3,9 +3,6 @@
 #include <stdio.h>
 #include <windows.h>
 
-constexpr int PHILOSOPHERS_COUNT = 5;
-constexpr int MEALS_PER_PHILOSOPHER = 1000000;
-
 template <class T>
 constexpr inline T min(T a, T b)
 {
@@ -18,7 +15,7 @@ constexpr inline T max(T a, T b)
   return a > b ? a : b;
 }
 
-static CRITICAL_SECTION sticks[PHILOSOPHERS_COUNT];
+static CRITICAL_SECTION sticks[NUM_PHILOSOPHERS];
 
 struct PhilosopherData
 {
@@ -32,7 +29,7 @@ DWORD WINAPI tryEat(LPVOID lpParameter)
 
   // calc left and right sticks
   int left = id;
-  int right = (id + 1) % PHILOSOPHERS_COUNT;
+  int right = (id + 1) % NUM_PHILOSOPHERS;
 
   int first = min(left, right);
   int second = max(left, right);
@@ -45,11 +42,11 @@ DWORD WINAPI tryEat(LPVOID lpParameter)
     EnterCriticalSection(&sticks[first]);
     EnterCriticalSection(&sticks[second]);
 
-    // philos is eating
-#ifdef DEBUG
-    // this causes a SPIKE in the timing becuase of the printing.
-    printf("Philosopher %d is eating\n", id);
-#endif
+    if (i == 0)
+    {
+      // philos is eating
+      printf("Philosopher %d is eating\n", id);
+    }
 
     LeaveCriticalSection(&sticks[second]);
     LeaveCriticalSection(&sticks[first]);
@@ -66,11 +63,11 @@ DWORD WINAPI tryEat(LPVOID lpParameter)
 #if CURRENT_TASK == 1
 int main(void)
 {
-  HANDLE threads[PHILOSOPHERS_COUNT];
-  PhilosopherData pData[PHILOSOPHERS_COUNT];
+  HANDLE threads[NUM_PHILOSOPHERS];
+  PhilosopherData pData[NUM_PHILOSOPHERS];
 
   // init the crit sections
-  for (int i = 0; i < PHILOSOPHERS_COUNT; ++i)
+  for (int i = 0; i < NUM_PHILOSOPHERS; ++i)
   {
     InitializeCriticalSection(&sticks[i]);
   }
@@ -79,7 +76,7 @@ int main(void)
   clock_t start = clock();
 
   // start creating the threads
-  for (int i = 0; i < PHILOSOPHERS_COUNT; ++i)
+  for (int i = 0; i < NUM_PHILOSOPHERS; ++i)
   {
     pData[i].id = i;
     threads[i] = CreateThread(NULL, 0, tryEat, &pData[i], 0, NULL);
@@ -91,14 +88,12 @@ int main(void)
   }
 
   // Wait for everything to finish
-  WaitForMultipleObjects(PHILOSOPHERS_COUNT, threads, TRUE, INFINITE);
+  WaitForMultipleObjects(NUM_PHILOSOPHERS, threads, TRUE, INFINITE);
 
   clock_t end = clock();
-  double totalTime = (double)(end - start) / CLOCKS_PER_SEC;
-  printf("Time taken: %f seconds\n", totalTime);
 
   // Cleanup
-  for (int i = 0; i < PHILOSOPHERS_COUNT; ++i)
+  for (int i = 0; i < NUM_PHILOSOPHERS; ++i)
   {
     CloseHandle(threads[i]);
     DeleteCriticalSection(&sticks[i]);
