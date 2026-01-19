@@ -72,9 +72,6 @@ int main(void)
     InitializeCriticalSection(&sticks[i]);
   }
 
-  puts("Starting to measure time...");
-  clock_t start = clock();
-
   // start creating the threads
   for (int i = 0; i < NUM_PHILOSOPHERS; ++i)
   {
@@ -89,8 +86,6 @@ int main(void)
 
   // Wait for everything to finish
   WaitForMultipleObjects(NUM_PHILOSOPHERS, threads, TRUE, INFINITE);
-
-  clock_t end = clock();
 
   // Cleanup
   for (int i = 0; i < NUM_PHILOSOPHERS; ++i)
