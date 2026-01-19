@@ -1,4 +1,4 @@
-#include "picker.h"
+#include "const.h"
 #include <ctime>
 #include <stdio.h>
 #include <windows.h>
@@ -55,7 +55,7 @@ DWORD WINAPI tryEat(LPVOID lpParameter)
   // end timing
   clock_t end = clock();
   double time_taken = (double)(end - start) / CLOCKS_PER_SEC;
-  printf("Philosopher %d finished %d meals in %f seconds\n", id, MEALS_PER_PHILOSOPHER, time_taken);
+  printf("Philosopher %d finished %d meals in %f seconds\n", id, MEALS_COUNT, time_taken);
 
   return 0;
 }
