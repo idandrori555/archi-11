@@ -6,12 +6,14 @@
 constexpr int PHILOSOPHERS_COUNT = 5;
 constexpr int MEALS_PER_PHILOSOPHER = 1000000;
 
-template <class T> constexpr inline T min(T a, T b)
+template <class T>
+constexpr inline T min(T a, T b)
 {
   return a < b ? a : b;
 }
 
-template <class T> constexpr inline T max(T a, T b)
+template <class T>
+constexpr inline T max(T a, T b)
 {
   return a > b ? a : b;
 }
@@ -28,20 +30,35 @@ DWORD WINAPI tryEat(LPVOID lpParameter)
   PhilosopherData *pData = (PhilosopherData *)lpParameter;
   int id = pData->id;
 
+  // calc left and right sticks
   int left = id;
   int right = (id + 1) % PHILOSOPHERS_COUNT;
 
   int first = min(left, right);
   int second = max(left, right);
 
+  // start timing
+  clock_t start = clock();
+
   for (int i = 0; i < MEALS_PER_PHILOSOPHER; ++i)
   {
     EnterCriticalSection(&sticks[first]);
     EnterCriticalSection(&sticks[second]);
 
+    // philos is eating
+#ifdef DEBUG
+    // this causes a SPIKE in the timing becuase of the printing.
+    printf("Philosopher %d is eating\n", id);
+#endif
+
     LeaveCriticalSection(&sticks[second]);
     LeaveCriticalSection(&sticks[first]);
   }
+
+  // end timing
+  clock_t end = clock();
+  double time_taken = (double)(end - start) / CLOCKS_PER_SEC;
+  printf("Philosopher %d finished %d meals in %f seconds\n", id, MEALS_PER_PHILOSOPHER, time_taken);
 
   return 0;
 }
@@ -52,7 +69,7 @@ int main(void)
   HANDLE threads[PHILOSOPHERS_COUNT];
   PhilosopherData pData[PHILOSOPHERS_COUNT];
 
-  // Initiaalize sticks (critical sections)
+  // init the crit sections
   for (int i = 0; i < PHILOSOPHERS_COUNT; ++i)
   {
     InitializeCriticalSection(&sticks[i]);
@@ -61,7 +78,7 @@ int main(void)
   puts("Starting to measure time...");
   clock_t start = clock();
 
-  // Initialize philosophers (threads)
+  // start creating the threads
   for (int i = 0; i < PHILOSOPHERS_COUNT; ++i)
   {
     pData[i].id = i;
