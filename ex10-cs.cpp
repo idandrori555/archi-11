@@ -6,14 +6,12 @@
 constexpr int PHILOSOPHERS_COUNT = 5;
 constexpr int MEALS_PER_PHILOSOPHER = 1000000;
 
-template <class T>
-constexpr inline T min(T a, T b)
+template <class T> constexpr inline T min(T a, T b)
 {
   return a < b ? a : b;
 }
 
-template <class T>
-constexpr inline T max(T a, T b)
+template <class T> constexpr inline T max(T a, T b)
 {
   return a > b ? a : b;
 }

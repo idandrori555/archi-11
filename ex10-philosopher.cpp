@@ -37,9 +37,11 @@ int main()
     string cmd = PROCESS_NAME + std::string{" "} + to_string(i);
     char *cmdArgs = _strdup(cmd.c_str());
 
-    if (!CreateProcessA(PROCESS_NAME, cmdArgs, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
+    if (!CreateProcessA(PROCESS_NAME, cmdArgs, NULL, NULL, FALSE, 0, NULL, NULL,
+                        &si, &pi))
     {
-      printf("Failed to create process %d. Make sure %s exists!\n", i, PROCESS_NAME);
+      printf("Failed to create process %d. Make sure %s exists!\n", i,
+             PROCESS_NAME);
     }
     else
     {
@@ -55,7 +57,8 @@ int main()
   double duration = double(end_time - start_time) / CLOCKS_PER_SEC;
 
   puts("\n--- Master: All processes finished ---");
-  printf("Total time with Processes and Named Mutexes: %.4f seconds.\n", duration);
+  printf("Total time with Processes and Named Mutexes: %.4f seconds.\n",
+         duration);
 
   for (int i = 0; i < NUM_PHILOSOPHERS; ++i)
   {
