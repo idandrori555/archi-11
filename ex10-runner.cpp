@@ -25,9 +25,7 @@ int main()
     }
   }
 
-  puts("Master: Created 5 Named Mutexes. Starting processes...");
-  clock_t start_time = clock();
-
+  puts("Created 5 Mutexes. Starting processes.");
   for (int i = 0; i < NUM_PHILOSOPHERS; ++i)
   {
     STARTUPINFOA si = {sizeof(si)};
@@ -49,10 +47,7 @@ int main()
   }
 
   WaitForMultipleObjects(NUM_PHILOSOPHERS, processes, TRUE, INFINITE);
-
-  clock_t end_time = clock();
-
-  puts("\n--- Master: All processes finished ---");
+  puts("\nAll processes finished");
 
   for (int i = 0; i < NUM_PHILOSOPHERS; ++i)
   {

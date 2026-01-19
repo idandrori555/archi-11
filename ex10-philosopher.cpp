@@ -2,6 +2,7 @@
 #include <ctime>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 #include <windows.h>
 
 #if CURRENT_TASK == 2
