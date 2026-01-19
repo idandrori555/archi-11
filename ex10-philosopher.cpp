@@ -3,12 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <synchapi.h>
 #include <windows.h>
 
-#if CURRENT_TASK == 2
 int main(int argc, char *argv[])
 {
-  if (argc < 2)
+  if (2 != ARGS_COUNT)
     return 1;
 
   int id = atoi(argv[1]);
@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
 
   HANDLE hLeft = OpenMutexA(MUTEX_ALL_ACCESS, FALSE, left_name.c_str());
   HANDLE hRight = OpenMutexA(MUTEX_ALL_ACCESS, FALSE, right_name.c_str());
+  HANDLE hPrint = OpenMutexA(MUTEX_ALL_ACCESS, FALSE, "Global\\Print");
 
   if (!hLeft || !hRight)
   {
@@ -31,7 +32,7 @@ int main(int argc, char *argv[])
 
   for (int i = 0; i < MEALS_COUNT; ++i)
   {
-    if (id == NUM_PHILOSOPHERS - 1)
+    if (NUM_PHILOSOPHERS - 1 == id)
     {
       WaitForSingleObject(hRight, INFINITE);
       WaitForSingleObject(hLeft, INFINITE);
@@ -48,12 +49,11 @@ int main(int argc, char *argv[])
 
   clock_t end = clock();
   double time_taken = (double)(end - start) / CLOCKS_PER_SEC;
-  printf("Philosopher %d finished eating %d meals in %f seconds\n", id,
-         MEALS_COUNT, time_taken);
+  printf("Philosopher %d finished eating %d meals in %f seconds\n", id, MEALS_COUNT, time_taken);
+  ReleaseMutex(hPrint);
 
   CloseHandle(hLeft);
   CloseHandle(hRight);
 
   return 0;
 }
-#endif

@@ -42,7 +42,7 @@ DWORD WINAPI tryEat(LPVOID lpParameter)
     EnterCriticalSection(&sticks[first]);
     EnterCriticalSection(&sticks[second]);
 
-    if (i == 0)
+    if (0 == i)
     {
       // philos is eating
       printf("Philosopher %d is eating\n", id);
@@ -60,7 +60,6 @@ DWORD WINAPI tryEat(LPVOID lpParameter)
   return 0;
 }
 
-#if CURRENT_TASK == 1
 int main(void)
 {
   HANDLE threads[NUM_PHILOSOPHERS];
@@ -96,4 +95,3 @@ int main(void)
 
   return 0;
 }
-#endif

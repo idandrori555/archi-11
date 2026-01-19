@@ -6,7 +6,6 @@
 
 constexpr const char *PROCESS_NAME = "philosopher.exe";
 
-#if CURRENT_TASK == 2
 int main()
 {
   using std::string, std::to_string;
@@ -18,7 +17,7 @@ int main()
   {
     string name = "Global\\Fork" + to_string(i);
     mutexes[i] = CreateMutexA(NULL, FALSE, name.c_str());
-    if (mutexes[i] == NULL)
+    if (NULL == mutexes[i])
     {
       printf("Failed to create mutex %d\n", i);
       return 1;
@@ -57,4 +56,3 @@ int main()
 
   return 0;
 }
-#endif
