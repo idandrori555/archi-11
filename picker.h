@@ -1,3 +1,3 @@
 #pragma once
 
-#define CURRENT_TASK 2
+#define CURRENT_TASK 1

@@ -25,8 +25,8 @@ task1: $(BUILD_DIR)
 # Task 2
 task2: $(BUILD_DIR)
 	@echo "Building task2..."
-	$(WCC) $(FLAGS) ./ex10-runner.cpp -o $(BUILD_DIR)/philosopher.exe
-	$(WCC) $(FLAGS) ./ex10-philosopher.cpp -o $(BUILD_DIR)/task2.exe
+	$(WCC) $(FLAGS) ./ex10-philosopher.cpp -o $(BUILD_DIR)/philosopher.exe
+	$(WCC) $(FLAGS) ./ex10-runner.cpp -o $(BUILD_DIR)/runner.exe
 
 clean:
 	rm -rf $(BUILD_DIR)

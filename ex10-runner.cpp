@@ -1,58 +1,70 @@
 #include "picker.h"
 #include <ctime>
+#include <iostream>
 #include <stdio.h>
-#include <stdlib.h>
 #include <windows.h>
 
-#if CURRENT_TASK == 2
 constexpr int NUM_PHILOSOPHERS = 5;
-constexpr int MEALS_COUNT = 1'000'000;
+constexpr const char *PROCESS_NAME = "philosopher.exe";
 
-int main(int argc, char *argv[])
+#if CURRENT_TASK == 2
+int main()
 {
-  if (argc < 2)
-    return 1;
+  using std::string, std::to_string;
 
-  int id = atoi(argv[1]);
-  int left_fork = id;
-  int right_fork = (id + 1) % NUM_PHILOSOPHERS;
+  HANDLE mutexes[NUM_PHILOSOPHERS];
+  HANDLE processes[NUM_PHILOSOPHERS];
 
-  char left_name[32], right_name[32];
-  sprintf(left_name, "Global\\Fork%d", left_fork);
-  sprintf(right_name, "Global\\Fork%d", right_fork);
-
-  HANDLE hLeft = OpenMutexA(MUTEX_ALL_ACCESS, FALSE, left_name);
-  HANDLE hRight = OpenMutexA(MUTEX_ALL_ACCESS, FALSE, right_name);
-
-  if (!hLeft || !hRight)
-    return 1;
-
-  clock_t start = clock();
-
-  for (int i = 0; i < MEALS_COUNT; ++i)
+  for (int i = 0; i < NUM_PHILOSOPHERS; ++i)
   {
-    if (id == NUM_PHILOSOPHERS - 1)
+    string name = "Global\\Fork" + to_string(i);
+    mutexes[i] = CreateMutexA(NULL, FALSE, name.c_str());
+    if (mutexes[i] == NULL)
     {
-      WaitForSingleObject(hRight, INFINITE);
-      WaitForSingleObject(hLeft, INFINITE);
+      printf("Failed to create mutex %d\n", i);
+      return 1;
+    }
+  }
+
+  puts("Master: Created 5 Named Mutexes. Starting processes...");
+  clock_t start_time = clock();
+
+  for (int i = 0; i < NUM_PHILOSOPHERS; ++i)
+  {
+    STARTUPINFOA si = {sizeof(si)};
+    PROCESS_INFORMATION pi;
+
+    string cmd = PROCESS_NAME + std::string{" "} + to_string(i);
+    char *cmdArgs = _strdup(cmd.c_str());
+
+    if (!CreateProcessA(PROCESS_NAME, cmdArgs, NULL, NULL, FALSE, 0, NULL, NULL,
+                        &si, &pi))
+    {
+      printf("Failed to create process %d. Make sure %s exists!\n", i,
+             PROCESS_NAME);
     }
     else
     {
-      WaitForSingleObject(hLeft, INFINITE);
-      WaitForSingleObject(hRight, INFINITE);
+      processes[i] = pi.hProcess;
+      CloseHandle(pi.hThread);
     }
-
-    ReleaseMutex(hLeft);
-    ReleaseMutex(hRight);
+    free(cmdArgs);
   }
 
-  clock_t end = clock();
-  double time_taken = (double)(end - start) / CLOCKS_PER_SEC;
-  printf("Philosopher %d finished eating %d meals in %f seconds\n", id,
-         MEALS_COUNT, time_taken);
+  WaitForMultipleObjects(NUM_PHILOSOPHERS, processes, TRUE, INFINITE);
 
-  CloseHandle(hLeft);
-  CloseHandle(hRight);
+  clock_t end_time = clock();
+  double duration = double(end_time - start_time) / CLOCKS_PER_SEC;
+
+  puts("\n--- Master: All processes finished ---");
+  printf("Total time with Processes and Named Mutexes: %.4f seconds.\n",
+         duration);
+
+  for (int i = 0; i < NUM_PHILOSOPHERS; ++i)
+  {
+    CloseHandle(processes[i]);
+    CloseHandle(mutexes[i]);
+  }
 
   return 0;
 }
